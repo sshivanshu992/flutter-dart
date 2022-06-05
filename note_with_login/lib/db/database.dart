@@ -1,6 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../models/note_models.dart';
 import '../models/user_models.dart';
 
 class MyDatabase {
@@ -36,15 +37,26 @@ class MyDatabase {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
     // const boolType = 'BOOLEAN NOT NULL';
-    // const integerType = 'INTEGER NOT NULL';
+    const integerType = 'INTEGER NOT NULL';
 
     await db.execute('''
-CREATE TABLE $tableName(
+CREATE TABLE $userTableName(
   ${UserField.id} $idType,
   ${UserField.username} $textType,
   ${UserField.mobile} $textType,
   ${UserField.email} $textType,
-  ${UserField.password} $textType 
+  ${UserField.password} $textType,
+)
+''');
+
+    //// creating the Note table
+    await db.execute('''
+CREATE TABLE $noteTableName(
+  ${NoteField.id} $idType,
+  ${NoteField.title} $textType,
+  ${NoteField.description} $textType,
+  ${NoteField.time} $textType,
+  ${NoteField.userId} $integerType,
 )
 ''');
   }
@@ -59,14 +71,15 @@ CREATE TABLE $tableName(
     // }
     //?This method helps insert a map of [values] into the specified [table] and
     //returns the id of the last inserted row.
-    final id = await db.insert(tableName, user.toJson());
+    final id = await db.insert(userTableName, user.toJson());
     return user.copy(id: id);
   }
 
   Future<bool> isUserExists(String email) async {
     final db = await instance.database;
+    // select * from table_name WHERE COLUMN_NAME = 'shivancu@mail.com'; // id, name, email, phone, password
     final maps = await db.query(
-      tableName,
+      userTableName,
       columns: UserField.values,
       where: '${UserField.email} = ?',
       whereArgs: [email],
@@ -79,12 +92,14 @@ CREATE TABLE $tableName(
     }
   }
 
+
+
   //? Code to Read a Single Record
   Future<bool> validUser(String email, String password) async {
     final db = await instance.database;
     //Same as; Select * from tableName where id = ?
 
-    final maps = await db.query(tableName,
+    final maps = await db.query(userTableName,
         columns: UserField.values,
         where: '${UserField.email} = ? and ${UserField.password} = ?',
         whereArgs: [email, password]);
@@ -93,6 +108,61 @@ CREATE TABLE $tableName(
       return true;
     } else {
       return false;
+    }
+  }
+
+  //only for one row or Record
+  Future<User> getUserInfo(String email) async {
+    final db = await instance.database;
+    // final orderBy = '${NoteField.time} ASC';
+    // select * from table_name WHERE colmn_name = 'shivasu@gmail.com'
+    final maps = await db.query(userTableName,
+        columns: UserField.values,
+        where: '${UserField.email} = ?',
+        whereArgs: [email]);
+// v= [1,2,3,4,5,6,7,8,9,0]
+// a = v[0]
+// a = 1
+
+    if (maps.isNotEmpty) {
+      return User.fromJson(maps.first);
+    } else {
+      throw Exception('Id $email not found');
+    }
+  }
+
+
+
+// ----------------------------------Note Table--------------------------------
+  Future<Note> insertNote(Note note) async {
+    final db = await instance.database;
+    final id = await db.insert(noteTableName, note.toJson());
+    //returns the id of the last inserted row.
+    return note.copy(id: id);
+  }
+
+  ///Read all note from the table
+  Future<List<Note>> getAllNote(Note note) async {
+    final db = await instance.database;
+    // final orderBy = '${NoteField.time} ASC';
+    // final x = await db.rawQuery('SELECT * FROM $noteTableName');
+    final res = await db.query(noteTableName, orderBy: '${NoteField.time} ASC');
+    //returns the id of the last inserted row.
+    return res.map((e) => Note.fromJson(e)).toList();
+  }
+
+  ///
+  Future<Note> getSingleNote(int id) async {
+    final db = await instance.database;
+    final maps = await db.query(noteTableName,
+        columns: NoteField.values,
+        where: '${NoteField.id} = ?',
+        whereArgs: [id]);
+
+    if (maps.isNotEmpty) {
+      return Note.fromJson(maps.first);
+    } else {
+      throw Exception('Id $id not found');
     }
   }
 

@@ -1,6 +1,7 @@
 //this one is a table name
-const String tableName = 'user';
+const String userTableName = 'user';
 
+// create table table_name (id type, username varchar);
 //for table columns
 class UserField {
   static const String id = '_id';
@@ -8,7 +9,7 @@ class UserField {
   static const String mobile = 'mobile';
   static const String email = 'email';
   static const String password = 'password';
-
+// select * from table_name
   static final List<String> values = [
     id,
     username,
@@ -32,7 +33,8 @@ class User {
     required this.email,
     required this.password,
   });
-
+// select * from table_name;
+// null, null , null, null, null
   User copy({
     int? id,
     String? username,
@@ -56,6 +58,10 @@ class User {
         email: json[UserField.email] as String,
         password: json[UserField.password] as String,
       );
+
+  // static User justEmailFromJson(Map<String, Object?> json) => User(
+  //       username: json[UserField.username] as String,
+  //     );
 
   ///? Code to Write Values from the Fields to JSON
   Map<String, Object?> toJson() => {

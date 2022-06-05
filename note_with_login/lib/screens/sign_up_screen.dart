@@ -4,7 +4,7 @@ import 'package:note_with_login/models/user_models.dart';
 import 'package:note_with_login/screens/login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
-  static const String routeName = '/signup';
+  static const String routeName = '/signup'; 
   const SignUpScreen({Key? key}) : super(key: key);
 
   @override
@@ -18,7 +18,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   var passrdController = TextEditingController();
 
   final formkey = GlobalKey<FormState>();
-  String name = '';
+  // String name = '';
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: [
                     TextButton(
                       onPressed: () {
+                        // 
                         Navigator.pushNamed(context, LoginScreen.routeName);
                       },
                       child: const Text(
@@ -134,12 +135,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ElevatedButton(
                       onPressed: () async {
                         if (formkey.currentState!.validate()) {
-                          if (await MyDatabase.instance
-                              .isUserExists(emailController.text)) {
+                          if (await MyDatabase.instance.isUserExists(emailController.text)) {
                             addUser();
                             Navigator.pushNamed(context, LoginScreen.routeName);
                           } else {
-                            print('Email Id Already Exists');
+                            showDialog(
+                              context: context,
+                              builder: (context) => const AlertDialog(
+                                // title: Text('Invalid User!'),
+                                content: Text('User already exists.'),
+                              ),
+                            );
                           }
                         }
                       },

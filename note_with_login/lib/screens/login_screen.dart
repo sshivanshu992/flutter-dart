@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:note_with_login/db/database.dart';
 import 'package:note_with_login/screens/sign_up_screen.dart';
 import 'package:note_with_login/screens/succes.dart';
+import 'package:provider/provider.dart';
+
+import '../models/user_models.dart';
+import '../providers/providder_file.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -16,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   var passrdController = TextEditingController();
   final formkey = GlobalKey<FormState>();
   String name = '';
+
+  late User user;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(
                         fontSize: 30,
                         color: Colors.blueAccent,
-                        letterSpacing: 2.0,),
+                        letterSpacing: 2.0),
                   ),
                 ),
                 SizedBox(height: height * 0.05),
@@ -82,14 +88,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Text(User.email),
+
                     ElevatedButton(
                       onPressed: () async {
                         // i'm checking here form field enter value right or not
                         if (formkey.currentState!.validate()) {
-                          //here i'm checking, Email id allready valid or not in database system
-                          if (await MyDatabase.instance.validUser(
-                              emailController.text, passrdController.text)) {
+                          //here i'm checking, Email id password valid or not in database system
+                          if (await MyDatabase.instance.validUser(emailController.text, passrdController.text)) {
+
+                                user = await MyDatabase.instance.getUserInfo(emailController.text);
+                                
+                            context.read<UserIdProvider>().userEmailIdForProvider(user);
+
                             Navigator.pushNamed(context, Success.routeName);
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) => const AlertDialog(
+                                // title: Text('Invalid User!'),
+                                content: Text('Invalied Email / Password!'),
+                              ),
+                            );
                           }
                         }
                       },
@@ -111,6 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, SignUpScreen.routeName);
+                        // Navigator.pop(context);
                       },
                       child: const Text(
                         'Sign up',
@@ -121,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextButton(
                       onPressed: () {},
                       child: Text(
-                        'Forgate your password',
+                        'Forgete your password',
                         style: TextStyle(
                             color: Colors.grey.shade700, letterSpacing: 2.0),
                       ),
