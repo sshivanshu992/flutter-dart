@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "837111026262",
+    "project_id": "firebase-cwancu",
+    "storage_bucket": "firebase-cwancu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:837111026262:android:6d05eca125ccd6ab8ce1f7",
+        "android_client_info": {
+          "package_name": "com.example.firebase_projects"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "837111026262-fhger9ta55i1965qei3vm94t9atrsg6s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBm5Qkk9-rhxOu48ezh8jJPzVTwxI2ozPY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "837111026262-fhger9ta55i1965qei3vm94t9atrsg6s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
